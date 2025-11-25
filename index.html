@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>آپلود عکس و گیف | ساخته توسط لئون</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Vazirmatn', sans-serif;
+      background: radial-gradient(circle at center, #1e1e2f, #0d0d1a);
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #2c2c3c;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.2);
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+      position: relative;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #00ffe0;
+    }
+    input[type="file"] {
+      background: #1a1a2a;
+      border: 1px solid #00ffe0;
+      padding: 12px;
+      border-radius: 10px;
+      color: #eee;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    button {
+      background: linear-gradient(135deg, #00ffe0, #0077ff);
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #00ffe0;
+    }
+    #result {
+      margin-top: 20px;
+      background: #1a1a2a;
+      padding: 15px;
+      border-radius: 10px;
+      word-break: break-word;
+      font-size: 14px;
+      direction: ltr;
+    }
+    .footer {
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      font-size: 12px;
+      color: #888;
+    }
+    .icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+      color: #00ffe0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🖼️</div>
+    <h1>آپلود عکس و گیف</h1>
+    <input type="file" id="fileInput" accept="image/*,image/gif">
+    <button onclick="uploadFile()">📤 آپلود کن</button>
+    <div id="result" style="display:none;"></div>
+    <div class="footer">ساخته توسط لئون</div>
+  </div>
+
+  <script>
+    async function uploadFile() {
+      const fileInput = document.getElementById('fileInput');
+      const resultBox = document.getElementById('result');
+      resultBox.style.display = 'block';
+
+      if (!fileInput.files[0]) {
+        resultBox.innerText = '❌ لطفاً یک فایل انتخاب کن.';
+        return;
+      }
+
+      const file = fileInput.files[0];
+
+      try {
+        const res = await fetch('https://api.bytescale.com/v2/accounts/kW2K8gd/uploads/binary', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer public_kW2K8gd29kEjDgn2GQLFo89BcGQx',
+            'Content-Type': file.type || 'application/octet-stream'
+          },
+          body: file
+        });
+
+        const data = await res.json();
+        if (data.fileUrl) {
+          resultBox.innerHTML = `✅ لینک فایل:<br><a href="${data.fileUrl}" target="_blank">${data.fileUrl}</a>`;
+        } else {
+          resultBox.innerText = '❌ خطا در آپلود.';
+        }
+      } catch (err) {
+        resultBox.innerText = '❌ خطا در ارتباط با سرور.';
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
